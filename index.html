@@ -14,18 +14,21 @@
 <style>
   :root {
     --bg: #002f61;
-    /* Option B: Champagne / light golden */
-    --gift-base: #F0E9E6;
-    --gift-shade: #E5DDD9;
-    --lid-base: #F0E9E6;
-    --lid-shade: #DED5D1;
-    /* 3D ribbon (simple, realistic) */
-    --ribbon: #C62828;
-    --ribbon-mid: #E74C4C;
-    --ribbon-dark: #8E1B1B;
-    /* Buttons same as box + black text */
-    --btn-bg: #F0E9E6;
+    /* GOLDEN (Option A) */
+    --gift-base: #f8dc8a;
+    --gift-shade: #e8c759; /* darker golden */
+    --lid-base: #f8dc8a;
+    --lid-shade: #e6c45a;
+
+    /* Premium bow only */
+    --ribbon: #c62828;      /* deep red */
+    --ribbon-mid: #e64b4b;  /* mid highlight */
+    --ribbon-dark: #8e1b1b; /* deep shadow */
+
+    /* Buttons match box, black text */
+    --btn-bg: #f8dc8a;
     --btn-text: #000000;
+
     --text: #ffffff;
     --shadow: rgba(0,0,0,0.35);
     --logo-top-width: 160px;
@@ -86,26 +89,18 @@
     box-shadow: 0 10px 20px var(--shadow); transform-origin: center bottom;
   }
 
-  /* ORIGINAL placement: centered bow on lid + vertical ribbon strip */
-  .ribbon-vertical { position:absolute; left:50%; top:0; transform:translateX(-50%); width:54px; height:100%;
-    background: linear-gradient(90deg, var(--ribbon-mid) 0%, var(--ribbon) 55%, var(--ribbon-dark) 100%);
-    box-shadow: inset 0 2px 0 rgba(255,255,255,.35), inset 0 -2px 0 rgba(0,0,0,.25);
-  }
-  /* Real 3D loops with visible gap */
+  /* BOW ONLY (no vertical ribbon) */
   .bow { position:absolute; top:-6px; left:50%; transform:translateX(-50%); width:200px; height:90px; pointer-events:none; }
-  .loop3d { position:absolute; width:90px; height:68px; border-radius:50% 50% 44% 44%;
-    background: radial-gradient(100% 100% at 35% 35%, #ffb1b1 0%, var(--ribbon-mid) 35%, var(--ribbon) 60%, var(--ribbon-dark) 100%);
-    box-shadow: inset 0 0 12px rgba(0,0,0,.25), 0 6px 14px rgba(0,0,0,.25);
+  .loopLux { position:absolute; width:94px; height:72px; border-radius:52% 52% 46% 46%;
+    background: radial-gradient(120% 120% at 35% 30%, #ffd0d0 0%, var(--ribbon-mid) 35%, var(--ribbon) 65%, var(--ribbon-dark) 100%),
+                linear-gradient(160deg, rgba(255,255,255,.35), rgba(255,255,255,0) 40%);
+    box-shadow: inset 0 -6px 10px rgba(0,0,0,.25), inset 0 8px 14px rgba(255,255,255,.15), 0 8px 16px rgba(0,0,0,.25);
   }
-  .loop3d.left { left:0; transform: rotate(-10deg); }
-  .loop3d.right { right:0; transform: rotate(10deg); }
-  /* inner dark cavity to show real loop opening */
-  .loop3d::after { content:""; position:absolute; left:50%; top:55%; transform:translate(-50%,-50%);
-    width:40px; height:26px; border-radius:50%; background: radial-gradient(60% 60% at 50% 35%, rgba(0,0,0,.6), rgba(0,0,0,.85));
-    filter: blur(0.5px); }
-  .knot3d { position:absolute; left:50%; top:22px; transform:translateX(-50%); width:28px; height:28px; border-radius:8px;
+  .loopLux.left { left:0; transform: rotate(-10deg); }
+  .loopLux.right { right:0; transform: rotate(10deg); }
+  .knotLux { position:absolute; left:50%; top:26px; transform:translateX(-50%); width:30px; height:30px; border-radius:10px;
     background: linear-gradient(145deg, var(--ribbon) 0%, var(--ribbon-dark) 100%);
-    box-shadow: inset 0 0 8px rgba(0,0,0,.35), 0 3px 8px rgba(0,0,0,.25); }
+    box-shadow: inset 0 0 10px rgba(0,0,0,.35), 0 4px 10px rgba(0,0,0,.25); }
 
   .lid-fly { animation: flyOff 1.1s ease-out forwards; }
   @keyframes flyOff { 0% { transform: translate(-50%, 0) rotate(0); } 60% { transform: translate(calc(-50% - 80px), -180px) rotate(-18deg); } 100% { transform: translate(calc(-50% - 150px), -300px) rotate(-28deg); opacity: .95; } }
@@ -182,11 +177,10 @@
     <div class="gift" aria-label="Gift Box">
       <div class="lid-wrap">
         <div class="lid" id="lid">
-          <div class="ribbon-vertical"></div>
           <div class="bow" aria-hidden="true">
-            <div class="loop3d left"></div>
-            <div class="loop3d right"></div>
-            <div class="knot3d"></div>
+            <div class="loopLux left"></div>
+            <div class="loopLux right"></div>
+            <div class="knotLux"></div>
           </div>
         </div>
       </div>
@@ -265,6 +259,7 @@
   <!-- Local audio (user-provided). -->
   <audio id="drum" preload="auto" src="assets/drum.mp3"></audio>
   <audio id="pop" preload="auto" src="assets/pop.mp3"></audio>
+  <audio id="clap" preload="auto" src="assets/clap.mp3"></audio>
 
 <script>
 (function(){
@@ -310,7 +305,8 @@
 
   const drum=document.getElementById('drum');
   const pop=document.getElementById('pop');
-  drum.volume=.9; pop.volume=.7;
+  const clap=document.getElementById('clap');
+  drum.volume=.9; pop.volume=.7; clap.volume=.7;
 
   // Winner modal
   const winnerOverlay=document.getElementById('winnerOverlay');
@@ -336,7 +332,7 @@
   function escapeHtml(s){ return String(s).replace(/[&<>\"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c])); }
 
   function renderEntries(){ if(!activePool.length){ entriesEl.textContent='No participants available.'; return; }
-    entriesEl.innerHTML=activePool.map(p=>{ const m=p.match(/^(.*) \((.*)\)$/); const name=m?m[1]:p; const company=m?m[2]:''; return `<div class="entry"><span class="name">${escapeHtml(name)}</span><span class="company">${escapeHtml(company)}</span></div>`; }).join(''); }
+    entriesEl.innerHTML=activePool.map(p=>{ const m=p.match(/^(.*) \((.*)\)$/); const name=m?m[1]:p; const company=m?m[2]:''; return `<div class=\"entry\"><span class=\"name\">${escapeHtml(name)}</span><span class=\"company\">${escapeHtml(company)}</span></div>`; }).join(''); }
 
   async function refreshParticipants(){ try{ const res=await fetch(getCsvUrl(),{cache:'no-store'}); if(!res.ok) throw new Error('Network error'); const csv=await res.text(); const parsed=Papa.parse(csv,{header:true,skipEmptyLines:true}); const rows=parsed.data; const toKey=s=>String(s||'').trim().toLowerCase(); const mapped=rows.map(r=>{ const o={}; Object.keys(r).forEach(k=>o[toKey(k)]=r[k]); const full=(o['full name']||o['fullname']||o['name']||'').toString().trim(); const comp=(o['name of company']||o['company']||'').toString().trim(); return {full,comp}; }).filter(x=>x.full&&x.comp); participants=mapped.map(x=>`${x.full} (${x.comp})`); const seen=new Set(); participants=participants.filter(p=>seen.has(p)?false:(seen.add(p),true)); activePool=participants.filter(p=>!winners.includes(p)); luckyQueue=luckyQueue.filter(p=>activePool.includes(p)).slice(0,3); renderEntries(); startIdleShuffle(); }catch(e){ console.error(e); entriesEl.textContent='Unable to load participants.'; } }
 
@@ -362,7 +358,13 @@
     if(!winner){ winner=activePool[Math.floor(Math.random()*activePool.length)]; }
     winners.push(winner); activePool=activePool.filter(p=>p!==winner);
     burstConfetti(); try{ pop.currentTime=0; await pop.play(); }catch(e){}
-    const m=winner.match(/^(.*) \((.*)\)$/); winnerNameEl.textContent=m?m[1]:winner; winnerCompanyEl.textContent=m?m[2]:''; winnerOverlay.style.display='grid'; countOverlay.style.display='none';
+
+    const m=winner.match(/^(.*) \((.*)\)$/); winnerNameEl.textContent=m?m[1]:winner; winnerCompanyEl.textContent=m?m[2]:'';
+    winnerOverlay.style.display='grid'; countOverlay.style.display='none';
+
+    // start clapping shortly after pop, while the winner modal is visible
+    try { clap.currentTime = 0; clap.play(); } catch(e) { console.warn('Clap blocked or missing', e); }
+
     renderEntries(); renderWinners(); updateLuckySelected(); disableControls(false); drawing=false; }
 
   function burstConfetti(){ const end=Date.now()+600; (function frame(){ confetti({particleCount:110, spread:75, startVelocity:58, origin:{y:0.7}}); if(Date.now()<end) requestAnimationFrame(frame); })(); confetti({particleCount:200, angle:60, spread:60, origin:{x:0}, zIndex:200}); confetti({particleCount:200, angle:120, spread:60, origin:{x:1}, zIndex:200}); }
@@ -370,16 +372,19 @@
   function renderWinners(){ winnersListEl.innerHTML=winners.map(w=>`<li>${escapeHtml(w)}</li>`).join(''); }
   function resetDraw(){ winners=[]; activePool=participants.slice(); renderWinners(); renderEntries(); lidEl.classList.remove('lid-fly','lid-return'); luckyQueue=[]; updateLuckySelected(); }
 
-  async function primeAudio(){ try{ drum.volume=0; await drum.play(); drum.pause(); drum.currentTime=0; drum.volume=.9; pop.volume=0; await pop.play(); pop.pause(); pop.currentTime=0; pop.volume=.7; alert('Sound primed. Ensure assets/drum.mp3 & assets/pop.mp3 exist.'); }catch(e){ alert('Autoplay blocked OR MP3s missing. Sounds will play after interactions when available.'); } }
+  async function primeAudio(){ try{ drum.volume=0; await drum.play(); drum.pause(); drum.currentTime=0; drum.volume=.9; pop.volume=0; await pop.play(); pop.pause(); pop.currentTime=0; pop.volume=.7; clap.volume=0; await clap.play(); clap.pause(); clap.currentTime=0; clap.volume=.7; alert('Sound primed. Ensure assets/drum.mp3, assets/pop.mp3 & assets/clap.mp3 exist.'); }catch(e){ alert('Autoplay blocked OR MP3s missing. Sounds will play after interactions when available.'); } }
 
   function downloadWinnersCSV(){ if(!winners.length){ alert('No winners yet.'); return; } const rows=[["Full Name","Name of Company"]].concat(winners.map(w=>{ const m=w.match(/^(.*) \((.*)\)$/); return [m?m[1]:w, m?m[2]:'' ]; })); const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n'); const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='past-winners.csv'; a.click(); URL.revokeObjectURL(url); }
 
   function openDrawer(){ drawerMask.style.display='block'; drawer.classList.add('open'); }
   function closeDrawerFn(){ drawerMask.style.display='none'; drawer.classList.remove('open'); }
 
-  function renderLuckyList(){ const q=(luckySearch.value||'').toLowerCase(); const items=activePool.filter(p=>p.toLowerCase().includes(q)); luckyGrid.innerHTML=items.map(p=>{ const m=p.match(/^(.*) \((.*)\)$/); const name=m?m[1]:p; const comp=m?m[2]:''; const selected=luckyQueue.includes(p); return `<div class="cand"><div class="meta"><div class="name">${escapeHtml(name)}</div><div class="company">${escapeHtml(comp)}</div></div><button class="pick-btn ${selected?'sel':'n'}" data-id="${escapeHtml(p)}">${selected?'Selected':'Pick'}</button></div>`; }).join(''); luckyGrid.querySelectorAll('.pick-btn').forEach(btn=>{ btn.addEventListener('click',()=>{ const id=btn.getAttribute('data-id'); if(luckyQueue.includes(id)){ luckyQueue=luckyQueue.filter(x=>x!==id); } else { if(luckyQueue.length>=3){ alert('You can only queue up to 3 Lucky Ones.'); return; } luckyQueue.push(id);} updateLuckySelected(); renderLuckyList(); }); }); }
+  function renderLuckyList(){ const q=(luckySearch.value||'').toLowerCase(); const items=activePool.filter(p=>p.toLowerCase().includes(q)); luckyGrid.innerHTML=items.map(p=>{ const m=p.match(/^(.*) \((.*)\)$/); const name=m?m[1]:p; const comp=m?m[2]:''; const selected=luckyQueue.includes(p); return `<div class=\"cand\"><div class=\"meta\"><div class=\"name\">${escapeHtml(name)}</div><div class=\"company\">${escapeHtml(comp)}</div></div><button class=\"pick-btn ${selected?'sel':'n'}\" data-id=\"${escapeHtml(p)}\">${selected?'Selected':'Pick'}</button></div>`; }).join(''); luckyGrid.querySelectorAll('.pick-btn').forEach(btn=>{ btn.addEventListener('click',()=>{ const id=btn.getAttribute('data-id'); if(luckyQueue.includes(id)){ luckyQueue=luckyQueue.filter(x=>x!==id); } else { if(luckyQueue.length>=3){ alert('You can only queue up to 3 Lucky Ones.'); return; } luckyQueue.push(id);} updateLuckySelected(); renderLuckyList(); }); }); }
   function updateLuckySelected(){ luckySelected.textContent=luckyQueue.length?luckyQueue.map(x=>x.replace(/ \(.+\)$/,'')).join(' → '):'None'; }
   function clearRig(){ luckyQueue=[]; updateLuckySelected(); renderLuckyList(); }
+
+  // Close clapping when winner modal closes
+  function stopClap(){ try { clap.pause(); clap.currentTime = 0; } catch(e){} }
 
   // ---- Wire up ----
   document.getElementById('btnRefresh').addEventListener('click', refreshParticipants);
@@ -392,12 +397,12 @@
   document.getElementById('btnLucky').addEventListener('click', ()=>{ luckyOverlay.style.display='grid'; renderLuckyList(); updateLuckySelected(); closeDrawerFn(); });
   luckySearch.addEventListener('input', renderLuckyList); luckyRefresh.addEventListener('click', renderLuckyList); btnClearRig.addEventListener('click', clearRig);
 
-  closeWinner.addEventListener('click', ()=>{ winnerOverlay.style.display='none'; lidEl.classList.remove('lid-fly','lid-return'); void lidEl.offsetWidth; lidEl.classList.add('lid-return'); });
-  closeWinners.addEventListener('click', ()=> winnersOverlay.style.display='none');
-  closeLucky.addEventListener('click', ()=>{ luckyOverlay.style.display='none'; });
+  document.getElementById('closeWinner').addEventListener('click', ()=>{ winnerOverlay.style.display='none'; stopClap(); lidEl.classList.remove('lid-fly','lid-return'); void lidEl.offsetWidth; lidEl.classList.add('lid-return'); });
+  document.getElementById('closeWinners').addEventListener('click', ()=> winnersOverlay.style.display='none');
+  document.getElementById('closeLucky').addEventListener('click', ()=>{ luckyOverlay.style.display='none'; });
 
   winnersOverlay.addEventListener('click', (e)=>{ if(e.target===winnersOverlay) winnersOverlay.style.display='none'; });
-  winnerOverlay.addEventListener('click', (e)=>{ if(e.target===winnerOverlay){ winnerOverlay.style.display='none'; lidEl.classList.remove('lid-fly','lid-return'); void lidEl.offsetWidth; lidEl.classList.add('lid-return'); } });
+  winnerOverlay.addEventListener('click', (e)=>{ if(e.target===winnerOverlay){ winnerOverlay.style.display='none'; stopClap(); lidEl.classList.remove('lid-fly','lid-return'); void lidEl.offsetWidth; lidEl.classList.add('lid-return'); } });
   luckyOverlay.addEventListener('click', (e)=>{ if(e.target===luckyOverlay) luckyOverlay.style.display='none'; });
 
   // Initial load
