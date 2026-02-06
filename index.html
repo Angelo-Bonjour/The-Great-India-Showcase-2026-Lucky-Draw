@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Grand Lucky Draw</title>
+<title>THE GREAT INDIA SHOWCASE 2026 - LUCKY DRAW</title>
 
 <!-- Canvas Confetti -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -14,9 +14,11 @@
 <style>
   :root {
     --bg: #002f61;
-    --gift-base: #0a3e80;
-    --gift-shade: #08356d;
-    --ribbon: #d62828; /* deep red */
+    --gift-base: #f4d67a;       /* light golden */
+    --gift-shade: #e9c85a;      /* slightly darker golden */
+    --lid-base: #f6d97f;        /* lid light gold */
+    --lid-shade: #e6c45a;       /* lid darker */
+    --ribbon: #d62828;          /* deep red for bow only */
     --ribbon-dark: #a71e1e;
     --gold: #ffcc00;
     --text: #ffffff;
@@ -41,102 +43,88 @@
   .chip { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.25); }
   .chip input { vertical-align: middle; margin-right: 6px; }
 
-  /* Gift Box */
-  .stage { width: min(92vw, 820px); display: grid; place-items: center; }
+  /* Stage & Gift */
+  .stage { width: min(92vw, 860px); display: grid; place-items: center; }
   .gift {
-    width: min(90vw, 720px); height: min(65vh, 440px); position: relative;
+    width: min(92vw, 780px); height: min(68vh, 480px); position: relative;
     display: grid; place-items: center; perspective: 900px; margin-top: 8px;
   }
-  /* Box base */
+
+  /* Box base (no ribbons on base, per request) */
   .box-base {
-    position: absolute; inset: 60px 0 0 0; /* leave space for lid to sit above */
-    margin: auto; width: 100%; height: calc(100% - 60px);
+    position: absolute; inset: 120px 0 0 0; /* leaves space for closed lid area */
+    margin: auto; width: 100%; height: calc(100% - 120px);
     background: linear-gradient(145deg, var(--gift-base) 0%, var(--gift-shade) 100%);
     border-radius: 14px; border: 4px solid #fff; overflow: hidden;
-    box-shadow: 0 16px 40px rgba(0,0,0,.35), inset 0 0 0 2px rgba(255,255,255,.15);
-  }
-  /* Horizontal ribbon across base */
-  .box-base::before {
-    content: ""; position: absolute; left: 0; right: 0; top: 40%; height: 46px;
-    background: linear-gradient(180deg, var(--ribbon) 0%, var(--ribbon-dark) 100%);
-  }
-  /* Vertical ribbon across base */
-  .box-base::after {
-    content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 46px; transform: translateX(-50%);
-    background: linear-gradient(90deg, var(--ribbon) 0%, var(--ribbon-dark) 100%);
-    box-shadow: inset 0 0 0 2px rgba(255,255,255,.15);
+    box-shadow: 0 16px 40px rgba(0,0,0,.35), inset 0 0 0 2px rgba(255,255,255,.25);
+    z-index: 1;
   }
 
-  /* Lid */
+  /* Lid (has a vertical ribbon strip on top only) */
   .lid {
-    position: absolute; width: calc(100% + 16px); height: 80px; left: 50%; transform: translateX(-50%);
-    top: 20px; border-radius: 12px; border: 4px solid #fff; z-index: 5;
-    background: linear-gradient(145deg, #0d4c9a 0%, #0a3e80 100%);
+    position: absolute; width: calc(100% + 16px); height: 110px; left: 50%; transform: translateX(-50%);
+    top: 18px; border-radius: 12px; border: 4px solid #fff; z-index: 5;
+    background: linear-gradient(145deg, var(--lid-base) 0%, var(--lid-shade) 100%);
     box-shadow: 0 10px 20px rgba(0,0,0,.35);
     transform-origin: center bottom;
   }
-  /* Lid ribbon strip */
   .lid::after {
-    content: ""; position: absolute; left: 50%; top: 0; width: 54px; height: 100%; transform: translateX(-50%);
+    content: ""; position: absolute; left: 50%; top: 0; width: 56px; height: 100%; transform: translateX(-50%);
     background: linear-gradient(90deg, var(--ribbon) 0%, var(--ribbon-dark) 100%);
   }
-  /* Bow on top */
+
+  /* Bow on top (tied ribbon) */
   .bow {
-    position: absolute; top: -12px; left: 50%; transform: translateX(-50%); z-index: 6;
-    width: 130px; height: 60px;
+    position: absolute; top: -4px; left: 50%; transform: translateX(-50%); z-index: 6;
+    width: 150px; height: 68px; pointer-events: none;
   }
-  .bow .loop {
-    position: absolute; width: 60px; height: 50px; border-radius: 50% 50% 45% 45%;
+  .bow .loop { position: absolute; width: 72px; height: 56px; border-radius: 50% 50% 45% 45%;
     background: radial-gradient(circle at 30% 30%, #ff6b6b, var(--ribbon-dark));
-    box-shadow: inset 0 0 8px rgba(0,0,0,.25);
-  }
+    box-shadow: inset 0 0 8px rgba(0,0,0,.25); }
   .bow .loop.left { left: 0; transform: rotate(-12deg); }
   .bow .loop.right { right: 0; transform: rotate(12deg); }
-  .bow .knot {
-    position: absolute; left: 50%; top: 16px; transform: translateX(-50%);
-    width: 34px; height: 28px; border-radius: 10px;
-    background: linear-gradient(145deg, #ff4b4b, var(--ribbon-dark));
-    box-shadow: inset 0 0 6px rgba(0,0,0,.25);
-  }
+  .bow .knot { position: absolute; left: 50%; top: 18px; transform: translateX(-50%);
+    width: 36px; height: 30px; border-radius: 10px; background: linear-gradient(145deg, #ff4b4b, var(--ribbon-dark));
+    box-shadow: inset 0 0 6px rgba(0,0,0,.25); }
 
-  /* Lid animation */
-  .lid-fly {
-    animation: flyOff 1.1s ease-out forwards;
-  }
+  /* Lid animation (triggered AFTER countdown now) */
+  .lid-fly { animation: flyOff 1.1s ease-out forwards; }
   @keyframes flyOff {
     0% { transform: translate(-50%, 0) rotate(0); }
-    60% { transform: translate(calc(-50% - 80px), -140px) rotate(-18deg); }
-    100% { transform: translate(calc(-50% - 120px), -220px) rotate(-28deg); opacity: .9; }
+    60% { transform: translate(calc(-50% - 80px), -160px) rotate(-18deg); }
+    100% { transform: translate(calc(-50% - 140px), -260px) rotate(-28deg); opacity: .9; }
   }
 
-  /* Entries grid */
+  /* Entries grid (kept safely below the lid area) */
   .box-content {
-    position: absolute; inset: 80px 16px 16px 16px; /* safely below lid area */
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 10px; align-content: start; overflow: auto; scrollbar-width: thin;
+    position: absolute; inset: 140px 16px 16px 16px; /* clearly below lid */
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px; align-content: start; overflow: hidden; scrollbar-width: thin; z-index: 2;
   }
   .entry {
-    background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.25);
+    background: rgba(0,0,0,.08); border: 1px solid rgba(255,255,255,.35);
     padding: 10px; border-radius: 10px; text-align: center; font-size: .95rem;
-    animation: slowBlink 3s infinite; transition: transform .12s ease;
+    animation: slowBlink 1.5s infinite; /* faster blink */
+    transition: transform .12s ease, left .35s ease, top .35s ease;
+    color: #1b1b1b; font-weight: 600;
   }
-  .entry .name { font-weight: 700; display: block; }
-  .entry .company { font-size: .85rem; opacity: .9; }
-  @keyframes slowBlink { 0%,100% {opacity:1} 50% {opacity:.55} }
+  .entry .name { font-weight: 800; display: block; color: #000; }
+  .entry .company { font-size: .85rem; opacity: .9; color: #222; }
+  @keyframes slowBlink { 0%,100% {opacity:1} 50% {opacity:.5} }
 
-  /* Countdown overlay */
-  #overlay {
-    position: fixed; inset: 0; display: none; place-items: center; background: rgba(0,0,0,.35);
-    z-index: 50; text-align: center; backdrop-filter: blur(1px);
-  }
+  /* Free-move mode during draw phase */
+  .free .entry { position: absolute; width: 180px; }
+
+  /* Overlay */
+  #overlay { position: fixed; inset: 0; display: none; place-items: center; background: rgba(0,0,0,.35); z-index: 50; text-align: center; backdrop-filter: blur(1px); }
   #overlay .count { font-size: clamp(64px, 12vw, 140px); font-weight: 800; text-shadow: 0 6px 0 rgba(0,0,0,.3); }
   #overlay .label { margin-top: 6px; font-size: 1.1rem; opacity: .9; }
 
   /* Winners */
-  #winners { width: min(92vw, 820px); background: rgba(255,255,255,.1); padding: 14px; border-radius: 12px; }
+  #winners { width: min(92vw, 860px); background: rgba(255,255,255,.1); padding: 14px; border-radius: 12px; }
   #winners h2 { margin: 0 0 10px; }
   #winnerList { margin: 6px 0 0; padding-left: 18px; }
-  #status { min-height: 20px; opacity: .9; font-size: .9rem; }
+  #status { min-height: 20px; opacity: .95; font-size: .92rem; }
 
   .note { font-size: .86rem; opacity: .85; }
 </style>
@@ -144,13 +132,14 @@
 <body>
   <header>
     <h1>Grand Lucky Draw</h1>
-    <div class="sub">Fetches participants from your Google Sheet CSV (Full Name + Name of Company)</div>
+    <div class="sub">Google Sheet CSV → Columns: <strong>Full Name</strong> and <strong>Name of Company</strong></div>
   </header>
 
   <div id="controls">
     <button id="btnRefresh">Refresh Participant List</button>
     <label class="chip"><input type="checkbox" id="autoRefresh"> Auto-Refresh (10s)</label>
     <button id="btnStart">Start Draw</button>
+    <button id="btnSound">Enable Sound</button>
   </div>
 
   <div class="stage">
@@ -182,9 +171,9 @@
     </div>
   </div>
 
-  <!-- Sounds -->
+  <!-- Sounds (explicit files for drum & pop) -->
   <audio id="drum" preload="auto" src="https://www.soundjay.com/human/sounds/drum-roll-01.mp3"></audio>
-  <audio id="tada" preload="auto" src="https://www.soundjay.com/human/sounds/applause-01.mp3"></audio>
+  <audio id="pop" preload="auto" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
 
 <script>
 (function(){
@@ -200,7 +189,7 @@
   let winners = [];
   let autoTimer = null;
   let drawing = false;
-  let danceTimer = null;
+  let moveTimer = null;
 
   // ---- Elements ----
   const entriesEl = document.getElementById('entries');
@@ -214,12 +203,16 @@
   const btnStart = document.getElementById('btnStart');
   const btnReset = document.getElementById('btnReset');
   const chkAuto = document.getElementById('autoRefresh');
+  const btnSound = document.getElementById('btnSound');
+
+  const drum = document.getElementById('drum');
+  const pop = document.getElementById('pop');
+  drum.volume = 0.9; pop.volume = 0.7;
 
   // ---- Utils ----
   function getCsvUrl(){
     const urlParam = new URLSearchParams(location.search).get('csv');
     let url = urlParam ? decodeURIComponent(urlParam) : DEFAULT_SHEET_CSV;
-    // sanitize accidental paste like "...output=csvThe names..."
     const marker = 'output=csv';
     const idx = url.indexOf(marker);
     if (idx !== -1) url = url.slice(0, idx + marker.length);
@@ -232,7 +225,7 @@
   }
 
   function disableControls(disabled){
-    btnStart.disabled = disabled; btnRefresh.disabled = disabled; btnReset.disabled = disabled; chkAuto.disabled = disabled;
+    btnStart.disabled = disabled; btnRefresh.disabled = disabled; btnReset.disabled = disabled; chkAuto.disabled = disabled; btnSound.disabled = disabled;
   }
 
   function renderEntries(){
@@ -259,7 +252,6 @@
       if (parsed.errors && parsed.errors.length){ console.warn(parsed.errors); }
 
       const rows = parsed.data;
-      // Expect columns: "Full Name" and "Name of Company" (case-insensitive)
       const toKey = s => String(s||'').trim().toLowerCase();
       const mapped = rows.map(r => {
         const o = {}; Object.keys(r).forEach(k => { o[toKey(k)] = r[k]; });
@@ -269,7 +261,6 @@
       }).filter(x => x.full && x.comp);
 
       participants = mapped.map(x => `${x.full} (${x.comp})`);
-      // De-duplicate while preserving order
       const seen = new Set();
       participants = participants.filter(p => (seen.has(p) ? false : (seen.add(p), true)));
 
@@ -278,7 +269,7 @@
       setStatus(`Loaded ${participants.length} participants. Active pool: ${activePool.length}.`);
     } catch (err){
       console.error(err);
-      setStatus('Failed to fetch/parse CSV. Make sure the sheet is "Published to the web" as CSV and that columns are named "Full Name" and "Name of Company".', true);
+      setStatus('Failed to fetch/parse CSV. Ensure it\'s published as CSV and column titles are "Full Name" and "Name of Company".', true);
       entriesEl.textContent = 'Unable to load participants.';
     }
   }
@@ -306,25 +297,52 @@
     });
   }
 
-  // ---- Dance animation during draw ----
-  function startDance(){
-    const items = Array.from(document.querySelectorAll('.entry'));
-    items.forEach(el => el.style.animationPlayState = 'paused'); // pause blinking
-    let tick = 0;
-    danceTimer = setInterval(()=>{
-      tick++;
+  // ---- Free movement logic ----
+  function startFreeMove(){
+    entriesEl.classList.add('free');
+    const bounds = entriesEl.getBoundingClientRect();
+    const items = Array.from(entriesEl.children);
+    // Initial random placement
+    items.forEach(el => {
+      const {w, h} = getItemSize(el);
+      const pos = randomPosition(bounds, w, h);
+      el.style.left = pos.x + 'px';
+      el.style.top  = pos.y + 'px';
+    });
+    moveTimer = setInterval(()=>{
+      const b = entriesEl.getBoundingClientRect();
       items.forEach(el => {
-        const dx = (Math.random()*12 - 6); // -6..6px
-        const dy = (Math.random()*12 - 6);
-        const rot = (Math.random()*6 - 3);
-        const scale = 1 + (Math.random()*0.06);
-        el.style.transform = `translate(${dx}px, ${dy}px) rotate(${rot}deg) scale(${scale})`;
+        const {w, h} = getItemSize(el);
+        const pos = randomPosition(b, w, h);
+        const rot = (Math.random()*10 - 5);
+        const scale = 1 + (Math.random()*0.08);
+        el.style.left = pos.x + 'px';
+        el.style.top  = pos.y + 'px';
+        el.style.transform = `rotate(${rot}deg) scale(${scale})`;
       });
-    }, 140);
+    }, 380);
   }
-  function stopDance(){
-    clearInterval(danceTimer); danceTimer = null;
-    document.querySelectorAll('.entry').forEach(el => { el.style.transform = 'none'; el.style.animationPlayState = 'running'; });
+
+  function getItemSize(el){
+    // Approximate; fall back to 180x66 if not laid out
+    const r = el.getBoundingClientRect();
+    const w = r.width || 180; const h = r.height || 66; return {w, h};
+  }
+
+  function randomPosition(containerRect, w, h){
+    const pad = 6;
+    const maxX = Math.max(0, containerRect.width - w - pad);
+    const maxY = Math.max(0, containerRect.height - h - pad);
+    const x = Math.floor(Math.random() * maxX) + pad/2;
+    const y = Math.floor(Math.random() * maxY) + pad/2;
+    return {x, y};
+  }
+
+  function stopFreeMove(){
+    clearInterval(moveTimer); moveTimer = null;
+    entriesEl.classList.remove('free');
+    // Clear inline left/top/transform so grid layout returns
+    Array.from(entriesEl.children).forEach(el => { el.style.left=''; el.style.top=''; el.style.transform='none'; });
   }
 
   // ---- Draw logic ----
@@ -332,34 +350,36 @@
     if (drawing) return; if (!activePool.length){ alert('No participants left!'); return; }
     drawing = true; disableControls(true);
 
-    // Lid fly off
+    await countdown(DRAW_COUNTDOWN_SEC);
+
+    // Open the lid AFTER countdown
     lidEl.classList.remove('lid-fly'); void lidEl.offsetWidth; // reflow
     lidEl.classList.add('lid-fly');
 
-    await countdown(DRAW_COUNTDOWN_SEC);
-
-    // Start drum roll and dance
-    try { document.getElementById('drum').currentTime = 0; document.getElementById('drum').play(); } catch(e){}
+    // Start drum roll and movement
+    try { drum.currentTime = 0; await drum.play(); } catch(e) { console.warn('Drum blocked:', e); }
     phaseLabel.textContent = 'Drawing…'; countText.textContent = '';
-    startDance();
+
+    // Switch entries to free-move mode
+    startFreeMove();
 
     await new Promise(r => setTimeout(r, DRAW_PHASE_MS));
 
-    stopDance();
+    stopFreeMove();
 
     // Pick winner (unique)
     const winner = activePool[Math.floor(Math.random()*activePool.length)];
     winners.push(winner);
     activePool = activePool.filter(p => p !== winner);
 
-    // Confetti blast (multi-pop)
+    // Confetti + pop sound
     burstConfetti();
-    try { const tada = document.getElementById('tada'); tada.currentTime = 0; tada.play(); } catch(e){}
+    try { pop.currentTime = 0; await pop.play(); } catch(e) { console.warn('Pop blocked:', e); }
 
     overlayEl.style.display = 'grid';
     countText.textContent = '🎉';
     phaseLabel.textContent = 'Winner!\n' + winner;
-    setTimeout(()=> overlayEl.style.display = 'none', 2200);
+    setTimeout(()=> overlayEl.style.display = 'none', 2000);
 
     renderEntries();
     renderWinners();
@@ -371,12 +391,11 @@
   function burstConfetti(){
     const end = Date.now() + 600;
     (function frame(){
-      confetti({ particleCount: 90, spread: 70, startVelocity: 50, origin: { y: 0.7 } });
+      confetti({ particleCount: 100, spread: 70, startVelocity: 55, origin: { y: 0.7 } });
       if (Date.now() < end) requestAnimationFrame(frame);
     })();
-    // Side cannons
-    confetti({ particleCount: 160, angle: 60, spread: 55, origin: { x: 0 }, zIndex: 200 });
-    confetti({ particleCount: 160, angle: 120, spread: 55, origin: { x: 1 }, zIndex: 200 });
+    confetti({ particleCount: 180, angle: 60, spread: 60, origin: { x: 0 }, zIndex: 200 });
+    confetti({ particleCount: 180, angle: 120, spread: 60, origin: { x: 1 }, zIndex: 200 });
   }
 
   function renderWinners(){
@@ -386,15 +405,24 @@
 
   function resetDraw(){
     winners = []; activePool = participants.slice(); renderWinners(); renderEntries(); setStatus('Reset complete.');
-    // Bring lid back by removing class (it starts closed visually)
     lidEl.classList.remove('lid-fly');
   }
 
+  async function primeAudio(){
+    // Attempt to unlock audio on user intent
+    try {
+      drum.volume = 0; await drum.play(); drum.pause(); drum.currentTime = 0; drum.volume = 0.9;
+      pop.volume = 0; await pop.play(); pop.pause(); pop.currentTime = 0; pop.volume = 0.7;
+      setStatus('Sound enabled.');
+    } catch(e){ setStatus('Your browser blocked autoplay. Sounds will play after interactions.', true); }
+  }
+
   // ---- Wire up ----
-  btnRefresh.addEventListener('click', refreshParticipants);
-  btnStart.addEventListener('click', startDraw);
-  btnReset.addEventListener('click', resetDraw);
-  chkAuto.addEventListener('change', toggleAuto);
+  document.getElementById('btnRefresh').addEventListener('click', refreshParticipants);
+  document.getElementById('btnStart').addEventListener('click', startDraw);
+  document.getElementById('btnReset').addEventListener('click', resetDraw);
+  document.getElementById('autoRefresh').addEventListener('change', toggleAuto);
+  document.getElementById('btnSound').addEventListener('click', primeAudio);
 
   // Initial load
   refreshParticipants();
